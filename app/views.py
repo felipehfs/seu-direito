@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.shortcuts import redirect 
 from django.views.generic.edit import FormView
 from django.http import HttpResponse
-from .forms import RegistrationForm, AdvogadoForm
-from .models import User, AdvogadoProfile
+from .forms import UserForm, AdvogadoForm, EmpresaForm
+from .models import User, AdvogadoProfile, EmpresaProfile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 class RegistrationView(FormView):
 	""" Action responsável pelo cadastro de novos usuários """
 	template_name = 'app/register.html'
-	form_class = RegistrationForm
+	form_class = UserForm
 	success_url = '/tanks/'
 
 	def form_valid(self, form):
@@ -44,11 +44,12 @@ def sistema(request):
 	return render(request, 'app/sistema.html', {})
 
 
+
 @login_required(login_url='app:index')
 def profile(request):
 	# se o usuário for advogado a view redirecionará para o profile correto
 	if request.method == 'GET':
-		if request.user.tipo == 'a':
+		if request.user.tipo == 'a': # Exibindo as informações pessoais do profile de advogados
 			try:
 				advogado = AdvogadoProfile.objects.get(user=request.user)
 				form = AdvogadoForm(instance=advogado)
@@ -56,11 +57,21 @@ def profile(request):
 				form =  AdvogadoForm()
 				form.instance.user = request.user
 
-		return render(request, 'app/new_profile.html', {'form': form })
+			return render(request, 'app/new_profile.html', {'form': form })
+
+		if request.user.tipo == 'e': # Exibindo as informações pessoais do profile da empresa
+			try:
+				empresa = EmpresaProfile.objects.get(user=request.user)
+				form = 	EmpresaForm(instance=empresa)
+			except EmpresaProfile.DoesNotExist:
+				form = EmpresaForm()
+				form.instance.user = request.user 
+			
+			return render(request, 'app/new_profile.html', {'form': form})
 
 
 	if request.method == 'POST':
-		if request.user.tipo == 'a':
+		if request.user.tipo == 'a': # Atualizando ou salvando as informações pessoais do advogado
 			try:
 				advogado = AdvogadoProfile.objects.get(user=request.user)	
 				form = AdvogadoForm(instance=advogado, data=request.POST)
@@ -70,6 +81,19 @@ def profile(request):
 
 			if form.is_valid():
 				form.instance.user = request.user
+				form.save()
+				return redirect('app:sistema')
+			return render(request, 'app/new_profile.html', {'form': form})
+
+		if request.user.tipo == 'e':
+			try:
+				empresa = EmpresaProfile.objects.get(user=request.user)
+				form =  EmpresaForm(instance=empresa, data=request.POST)
+			except EmpresaProfile.DoesNotExist:
+				form = EmpresaForm(request.POST)
+				form.instance.user = request.user 
+
+			if form.is_valid():
 				form.save()
 				return redirect('app:sistema')
 			return render(request, 'app/new_profile.html', {'form': form})

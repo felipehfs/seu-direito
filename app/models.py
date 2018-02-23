@@ -3,7 +3,6 @@ from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
 	UserManager)
 from django.conf import settings 
 
-# Create your models here.
 
 class User(AbstractBaseUser, PermissionsMixin):
 	""" Classe que representa o profile do usuário """
@@ -34,9 +33,18 @@ class User(AbstractBaseUser, PermissionsMixin):
 		verbose_name_plural = "Usuários"
 
 class AdvogadoProfile(models.Model):
+	""" AdvogadoProfile representa os dados pessoais do advogado """
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	telefone = models.CharField("Telefone",  max_length=20)
 	cpf = models.CharField("CPF", max_length=20, unique=True)
+
+	def __str__(self):
+		return self.user.username
+
+class EmpresaProfile(models.Model):
+	""" EmpresaProfile representa os dados pessoais da empresa """
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	ramo = models.CharField('Ramo de atuação', max_length=30)
 
 	def __str__(self):
 		return self.user.username
