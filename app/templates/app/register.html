@@ -1,0 +1,15 @@
+{% extends 'app/base.html' %}
+{% block content %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				<form method="post">
+					<legend>Cadastre-se</legend>
+					{% csrf_token%}
+					{{form.as_p }}
+					<input type="submit" value="Registrar" class="btn btn-primary">
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}
