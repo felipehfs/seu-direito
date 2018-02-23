@@ -1,6 +1,7 @@
 {% extends 'app/base.html' %}
 
 {% block content %}
-	<h1>Bem vindo {{request.user.tipo }}</h1>
-	<a href="{% url 'app:logout' %}">Logout</a>
+	{% include 'app/menu.html' %}
+
+
 {% endblock %}

@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.shortcuts import redirect 
 from django.views.generic.edit import FormView
 from django.http import HttpResponse
-from .forms import RegistrationForm
-from .models import User 
+from .forms import RegistrationForm, AdvogadoForm
+from .models import User, AdvogadoProfile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -21,15 +21,14 @@ class RegistrationView(FormView):
 		
 		obj.set_password(form.cleaned_data['password1'])
 		obj.save()
-		
-		return HttpResponse("Salvo!")
+		login(self.request, obj)
+		return redirect('app:sistema')
 
 def index(request):
 	""" Home page com os campos de login """
 	if request.method == "POST":
 		form = AuthenticationForm(data=request.POST)
 		if form.is_valid():
-			print(form.get_user())
 			login(request, form.get_user())
 			return redirect('app:sistema')
 		else:
@@ -43,3 +42,34 @@ def logout_user(request):
 @login_required(login_url='app:index')
 def sistema(request):
 	return render(request, 'app/sistema.html', {})
+
+
+@login_required(login_url='app:index')
+def profile(request):
+	# se o usuário for advogado a view redirecionará para o profile correto
+	if request.method == 'GET':
+		if request.user.tipo == 'a':
+			try:
+				advogado = AdvogadoProfile.objects.get(user=request.user)
+				form = AdvogadoForm(instance=advogado)
+			except AdvogadoProfile.DoesNotExist:
+				form =  AdvogadoForm()
+				form.instance.user = request.user
+
+		return render(request, 'app/new_profile.html', {'form': form })
+
+
+	if request.method == 'POST':
+		if request.user.tipo == 'a':
+			try:
+				advogado = AdvogadoProfile.objects.get(user=request.user)	
+				form = AdvogadoForm(instance=advogado, data=request.POST)
+			except AdvogadoProfile.DoesNotExist:
+				form = AdvogadoForm(request.POST)
+				form.instance.user = request.user 
+
+			if form.is_valid():
+				form.instance.user = request.user
+				form.save()
+				return redirect('app:sistema')
+			return render(request, 'app/new_profile.html', {'form': form})
