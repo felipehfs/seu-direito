@@ -48,6 +48,10 @@ def logout_user(request):
 
 @login_required(login_url='app:index')
 def sistema(request):
+	if request.user.tipo == 'a':
+		propostas_aceitas = Proposta.objects.filter(advogado=request.user, aceito=True)
+		print(propostas_aceitas)
+		return render(request, 'app/sistema.html', {'aceitas': propostas_aceitas})
 	return render(request, 'app/sistema.html', {})
 
 
@@ -139,13 +143,15 @@ def remove_ordem(request, ord_id):
 @login_required(login_url='app:index')
 def detalhes_ordem(request, ord_id):
 	query = OrdemDeServico.objects.get(pk=ord_id)
-	info_empresa = EmpresaProfile.objects.get(user=query.empresa)
-	
+	try:
+		info_empresa = EmpresaProfile.objects.get(user=query.empresa)
+	except EmpresaProfile.DoesNotExist:
+		info_empresa = None
 	proposta = Proposta.objects.filter(servico=query)
 	return render(request, 'app/detalhes_servico.html', 
 			{'ordem': query, 
 				'propostas': proposta, 
-				'info_empresa': info_empresa })
+				'info_empresa': info_empresa, 'advise': "Preencha suas informações pessoais" })
 
 @login_required(login_url='app:index')
 def enviar_proposta(request, ord_id):

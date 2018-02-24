@@ -2,6 +2,39 @@
 
 {% block content %}
 	{% include 'app/menu.html' %}
-
-
+	<div class="container">
+		{% if request.user.tipo == 'a' %}
+			<div class="card">
+				<div class="card-header">
+					Propostas aceitas
+				</div>
+				<div class="card-body">
+					{% if  aceitas %}
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Empresa</th>
+									<th>Contato</th>
+									<th>Valor</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for proposta in aceitas %}
+									<tr>
+										<td>{{ proposta.servico.empresa }}</td>
+										<td>{{ proposta.servico.empresa.email }}</td>
+										<td>{{ proposta.valor }}</td>
+										<td>{{ proposta.servico.status }}</td>
+									</tr>
+								{% endfor%}
+							</tbody>
+						</table>
+					{% else %}
+						<p>Sem propostas aceitas!</p>
+					{% endif%}
+				</div>
+			</div>
+		{% endif %}
+	</div>
 {% endblock %}

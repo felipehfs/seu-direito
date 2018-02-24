@@ -10,7 +10,9 @@
 				<p><strong>Título: </strong> {{ ordem.titulo }} </p>
 				<p><strong>Empresa:</strong> {{ ordem.empresa.username }}</p>
 				<p><strong>E-mail: </strong> {{ ordem.empresa.email }}</p>
+				{% if info_empresa %}
 				<p><strong>Atuação:</strong> {{ info_empresa.ramo }}</p>
+				{% endif %}
 				<p><strong>Status:</strong>  {{ ordem.status }}</p>
 				<p>
 					<strong>Descrição</strong><br>
