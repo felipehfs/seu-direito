@@ -17,6 +17,7 @@ pylint = "==1.8.2"
 pytz = "==2018.3"
 wrapt = "==1.10.11"
 gunicorn = "*"
+dj-database-url = "*"
 
 
 [dev-packages]
