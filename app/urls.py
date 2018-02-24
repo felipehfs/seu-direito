@@ -15,4 +15,6 @@ urlpatterns = [
 	path('sistema/empresas/servicos/<int:ord_id>', views.detalhes_ordem, name='detalhes_ordem'),
 	path('sistema/empresas/servicos/<int:ord_id>/remove', views.remove_ordem, name='remove_ordem'),
 	path('sistema/servicos/<int:ord_id>/proposta', views.enviar_proposta, name="enviar_proposta"),
+	path('sistema/<int:ord_id>/servicos/<int:prop_id>/aceita', views.aceita_proposta, name="aceita_proposta"),
+	path('sistema/<int:ordem_id>/servicos/finaliza', views.finaliza_ordem, name='finaliza_ordem'),
 ]

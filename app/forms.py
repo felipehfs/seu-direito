@@ -23,7 +23,7 @@ class UserForm(forms.ModelForm):
 		fields = ['username', 'tipo', 'email']
 
 class AdvogadoForm(forms.ModelForm):
-	""" AdvogadoForm representa o formulario sobre informações pessoais do advogado """
+	""" AdvogadoForm representa o formulário sobre informações pessoais do advogado """
 	telefone = forms.RegexField(label='Telefone', max_length=20, regex=r'(\d{4,5})-(\d{4})')
 	cpf = forms.RegexField(label='cpf', max_length=20, 
 		regex=r'(\d{3})\.(\d{3})\.(\d{3})-(\d{2})')
@@ -69,7 +69,7 @@ class OrdemDeServicoForm(forms.ModelForm):
 		fields = ['titulo', 'descricao']
 
 class PropostaForm(forms.ModelForm):
-
+	""" PropostaForm representa o formulário da proposta """
 	def __init__(self, *args, **kwargs):
 		super(PropostaForm, self).__init__(*args, **kwargs)
 		for field in iter(self.fields):

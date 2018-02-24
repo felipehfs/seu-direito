@@ -139,8 +139,13 @@ def remove_ordem(request, ord_id):
 @login_required(login_url='app:index')
 def detalhes_ordem(request, ord_id):
 	query = OrdemDeServico.objects.get(pk=ord_id)
+	info_empresa = EmpresaProfile.objects.get(user=query.empresa)
+	
 	proposta = Proposta.objects.filter(servico=query)
-	return render(request, 'app/detalhes_servico.html', {'ordem': query, 'propostas': proposta})
+	return render(request, 'app/detalhes_servico.html', 
+			{'ordem': query, 
+				'propostas': proposta, 
+				'info_empresa': info_empresa })
 
 @login_required(login_url='app:index')
 def enviar_proposta(request, ord_id):
@@ -163,8 +168,26 @@ def enviar_proposta(request, ord_id):
 			return redirect('app:sistema')
 		return render(request, 'app/nova_proposta', {'form': form})
 
-def aceita_proposta(request, prop_id):
-	prop = Proposta.objects.get(pk=ord_id)
+@login_required(login_url='app:index')
+def aceita_proposta(request, ord_id, prop_id):
+	if request.user.tipo == 'a':
+		return redirect('app:index')
+
+	prop = Proposta.objects.get(pk=prop_id)
 	prop.aceito = True 
-	
 	prop.save()
+
+	servico = OrdemDeServico.objects.get(pk=ord_id)
+	servico.status = 'Delegada'
+	servico.save()
+	return redirect('app:sistema')
+
+@login_required(login_url='app:index')
+def finaliza_ordem(request, ordem_id):
+	if request.user.tipo == 'a':
+		return redirect('app:index')
+
+	ordem = OrdemDeServico.objects.get(pk=ordem_id)
+	ordem.status = "Finalizada"
+	ordem.save()
+	return redirect('app:sistema')

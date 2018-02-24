@@ -8,12 +8,20 @@
 			</div>
 	  		<div class="card-body">
 				<p><strong>Título: </strong> {{ ordem.titulo }} </p>
-				<hp><strong>Empresa:</strong> {{ ordem.empresa.username }}</p>
+				<p><strong>Empresa:</strong> {{ ordem.empresa.username }}</p>
+				<p><strong>E-mail: </strong> {{ ordem.empresa.email }}</p>
+				<p><strong>Atuação:</strong> {{ info_empresa.ramo }}</p>
 				<p><strong>Status:</strong>  {{ ordem.status }}</p>
 				<p>
 					<strong>Descrição</strong><br>
-					{{ ordem.descricao}}
+					{{ ordem.descricao|linebreaks }}
 				</p>
+				{% if ordem.status == 'Delegada' and request.user.tipo == 'e' %}
+					<form action="{% url 'app:finaliza_ordem' ordem.pk %}" method="post">
+						{% csrf_token %}
+						<input type="submit" value="Finalizar" class="btn btn-danger">
+					</form>
+				{% endif %}
 	  		</div>
 
 	  		<div class="card">
@@ -26,6 +34,7 @@
 	  						<thead>
 	  							<tr>
 	  								<th>Advogado</th>
+	  								<th>E-mail</th>
 	  								<th>Valor</th>
 	  								<th>Status</th>
 	  								{% if request.user.tipo == 'e' %}
@@ -38,6 +47,7 @@
 		  							{% if proposta.advogado.username == request.user.username %}
 				  						<tr class="text-info">
 				  							<td>{{ proposta.advogado.username }}</td>
+				  							<td>{{ proposta.advogado.email }}</td>
 				  							<td> R$ {{ proposta.valor }}</td>
 											<td>
 				  								{% if proposta.aceito %}
@@ -57,6 +67,7 @@
 				  					{% else %}
 				  						<tr class="text-muted">
 				  							<td>{{ proposta.advogado.username }}</td>
+				  							<td>{{ proposta.advogado.email }}</td>
 				  							<td> R$ {{ proposta.valor }}</td>
 											<td>
 				  								{% if proposta.aceito %}
@@ -67,7 +78,7 @@
 				  							</td>
 				  							<td>
 				  								{% if request.user.tipo == 'e' and  ordem.status == 'Criada' %}
-				  									<form action="">
+				  									<form action="{% url 'app:aceita_proposta' ordem.pk proposta.pk %}">
 				  										<input type="submit" class="btn btn-primary" value="Aceitar">
 				  									</form>
 				  								{% endif %}
