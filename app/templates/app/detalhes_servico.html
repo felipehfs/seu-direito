@@ -1,0 +1,69 @@
+{% extends 'app/base.html' %}
+{% block content %}
+	{% include 'app/menu.html' %}
+	<div class="container" style="margin-top: 41px;">
+		<div class="card">
+			<div class="card-header">
+				Ordem de serviço
+			</div>
+	  		<div class="card-body">
+				<p><strong>Título: </strong> {{ ordem.titulo }} </p>
+				<hp><strong>Empresa:</strong> {{ ordem.empresa.username }}</p>
+				<p><strong>Status:</strong>  {{ ordem.status }}</p>
+				<p>
+					<strong>Descrição</strong><br>
+					{{ ordem.descricao}}
+				</p>
+	  		</div>
+
+	  		<div class="card">
+	  			<div class="card-header">
+	  				Propostas
+	  			</div>
+	  			<div class="card-body">
+	  				{% if propostas %}
+	  					<table class="table">
+	  						<thead>
+	  							<tr>
+	  								<th>Advogado</th>
+	  								<th>Valor</th>
+	  								<th>Status</th>
+	  							</tr>
+	  						</thead>
+	  						<tbody>
+		  					{% for proposta in propostas %}
+		  							{% if proposta.advogado.username == request.user.username %}
+				  						<tr class="text-info">
+				  							<td>{{ proposta.advogado.username }}</td>
+				  							<td> R$ {{ proposta.valor }}</td>
+											<td>
+				  								{% if proposta.aceito %}
+													Aceito
+												{% else%}
+													Pendente
+				  								{% endif %}
+				  							</td>
+				  						</tr>
+				  					{% else %}
+				  						<tr class="text-muted">
+				  							<td>{{ proposta.advogado.username }}</td>
+				  							<td> R$ {{ proposta.valor }}</td>
+											<td>
+				  								{% if proposta.aceito %}
+													Aceito
+												{% else%}
+													Pendente
+				  								{% endif %}
+				  							</td>
+				  						</tr>
+			  						{% endif %}
+		  					{% endfor %}
+		  				
+	  						</tbody>
+	  					</table>
+	  				{% endif%}	
+	  			</div>
+	  		</div>
+		</div>
+	</div>
+{% endblock %}

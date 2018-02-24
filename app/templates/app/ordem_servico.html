@@ -1,0 +1,43 @@
+{% extends 'app/base.html' %}
+{% block content %}
+	{% include 'app/menu.html' %}
+	{% if ordens %}
+		<div class="container">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Empresa</th>
+						<th>Título</th>
+						<th>Status</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for ordem in ordens %}
+						<tr>
+							<td> {{ ordem.empresa.username }} </td>
+							<td> {{ ordem.titulo}} </td>
+							<td> {{ ordem.status }} </td>
+							<td>
+								<a href="{% url 'app:detalhes_ordem' ordem.pk %}" class="btn btn-info">Detalhes</a>
+								{% if request.user.tipo == 'e'%}
+								<form method="post" style="display: inline;" action="{% url 'app:remove_ordem' ordem.pk %}">
+									{% csrf_token %}
+									<button type="submit" class="btn btn-danger">Remover</button>
+								</form>
+								{% else %}
+									<a href="{% url 'app:enviar_proposta' ordem.pk %}" class="btn btn-primary">Enviar proposta</a>
+								{% endif%}
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else%}
+		<div class="container">
+			<h2>Não existem ordens de serviços</h2>
+		</div>
+	{% endif%}
+	
+{% endblock %}

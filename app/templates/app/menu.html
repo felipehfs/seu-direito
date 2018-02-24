@@ -12,7 +12,7 @@
         <a class="nav-link" href="#">Features</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Pricing</a>
+        <a class="nav-link" href="{% url 'app:ordem_de_servico' %}">Serviços</a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -21,7 +21,9 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="{% url 'app:logout' %}">Logout</a>
           <a class="dropdown-item" href="{% url 'app:profile' %}">Profile</a>
-          <a class="dropdown-item" href="#">Something else here</a>
+          {% if request.user.tipo == 'e'%}
+            <a class="dropdown-item" href="{% url 'app:novo_servico' %}">Nova ordem de serviço</a>
+          {% endif %}
         </div>
       </li>
     </ul>

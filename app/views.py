@@ -2,11 +2,18 @@ from django.shortcuts import render
 from django.shortcuts import redirect 
 from django.views.generic.edit import FormView
 from django.http import HttpResponse
-from .forms import UserForm, AdvogadoForm, EmpresaForm
-from .models import User, AdvogadoProfile, EmpresaProfile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+
+
+from .forms import UserForm
+from .forms import AdvogadoForm
+from .forms import EmpresaForm
+from .forms import OrdemDeServicoForm
+from .forms import PropostaForm
+from .models import User, AdvogadoProfile, EmpresaProfile, OrdemDeServico, Proposta
+
 
 class RegistrationView(FormView):
 	""" Action responsável pelo cadastro de novos usuários """
@@ -97,3 +104,60 @@ def profile(request):
 				form.save()
 				return redirect('app:sistema')
 			return render(request, 'app/new_profile.html', {'form': form})
+
+
+@login_required(login_url='app:index')
+def novo_servico(request):
+	if request.user.tipo == 'a': # se for um advogado ele redicionará para página original do sistema
+		return redirect('app:sistema')
+	elif request.method == 'POST':
+		servico = OrdemDeServicoForm(request.POST)
+		servico.instance.empresa = request.user 
+		if servico.is_valid():
+			servico.save()
+			return redirect('app:sistema')
+		return render(request, 'app/novo_servico.html', {'form': servico})
+
+	servico = OrdemDeServicoForm()
+	servico.instance.empresa = request.user 
+	return render(request, 'app/novo_servico.html', {'form': servico})
+
+@login_required(login_url='app:index')
+def ordens_de_servico(request):
+	if request.user.tipo == 'e':
+		ordens = OrdemDeServico.objects.filter(empresa=request.user)
+	else:
+		ordens = OrdemDeServico.objects.all()
+	return render(request, 'app/ordem_servico.html', {'ordens': ordens})
+
+@login_required(login_url='app:index')
+def remove_ordem(request, ord_id):
+	query = OrdemDeServico.objects.get(pk=ord_id)
+	query.delete()
+	return redirect('app:sistema')
+
+@login_required(login_url='app:index')
+def detalhes_ordem(request, ord_id):
+	query = OrdemDeServico.objects.get(pk=ord_id)
+	proposta = Proposta.objects.filter(servico=query)
+	return render(request, 'app/detalhes_servico.html', {'ordem': query, 'propostas': proposta})
+
+def enviar_proposta(request, ord_id):
+	if request.method == 'GET':
+		ordem = OrdemDeServico.objects.get(pk=ord_id)
+		try:
+			proposta = Proposta.objects.get(advogado=request.user, servico=ordem)
+			form = PropostaForm(instance=proposta)
+		except Proposta.DoesNotExist:
+			form = PropostaForm()
+		return render(request, 'app/nova_proposta.html',{'form': form})
+
+	if request.method == 'POST':
+		form = PropostaForm(request.POST)
+		ordem = OrdemDeServico.objects.get(pk=ord_id)
+		form.instance.servico = ordem
+		form.instance.advogado = request.user
+		if form.is_valid():
+			form.save()
+			return redirect('app:sistema')
+		return render(request, 'app/nova_proposta', {'form': form})
