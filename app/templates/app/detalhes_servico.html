@@ -28,6 +28,9 @@
 	  								<th>Advogado</th>
 	  								<th>Valor</th>
 	  								<th>Status</th>
+	  								{% if request.user.tipo == 'e' %}
+	  								<th>Ações</th>
+	  								{% endif %}
 	  							</tr>
 	  						</thead>
 	  						<tbody>
@@ -43,6 +46,13 @@
 													Pendente
 				  								{% endif %}
 				  							</td>
+				  							<td>
+				  								{% if request.user.tipo == 'e' and  ordem.status == 'Criada' %}
+				  									<form action="">
+				  										<input type="submit" class="btn btn-primary" value="Aceitar">
+				  									</form>
+				  								{% endif %}
+				  							</td>
 				  						</tr>
 				  					{% else %}
 				  						<tr class="text-muted">
@@ -53,6 +63,13 @@
 													Aceito
 												{% else%}
 													Pendente
+				  								{% endif %}
+				  							</td>
+				  							<td>
+				  								{% if request.user.tipo == 'e' and  ordem.status == 'Criada' %}
+				  									<form action="">
+				  										<input type="submit" class="btn btn-primary" value="Aceitar">
+				  									</form>
 				  								{% endif %}
 				  							</td>
 				  						</tr>

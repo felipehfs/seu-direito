@@ -127,7 +127,7 @@ def ordens_de_servico(request):
 	if request.user.tipo == 'e':
 		ordens = OrdemDeServico.objects.filter(empresa=request.user)
 	else:
-		ordens = OrdemDeServico.objects.all()
+		ordens = OrdemDeServico.objects.filter(status="Criada")
 	return render(request, 'app/ordem_servico.html', {'ordens': ordens})
 
 @login_required(login_url='app:index')
@@ -162,3 +162,9 @@ def enviar_proposta(request, ord_id):
 			form.save()
 			return redirect('app:sistema')
 		return render(request, 'app/nova_proposta', {'form': form})
+
+def aceita_proposta(request, prop_id):
+	prop = Proposta.objects.get(pk=ord_id)
+	prop.aceito = True 
+	
+	prop.save()
