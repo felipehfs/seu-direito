@@ -57,7 +57,7 @@ class OrdemDeServico(models.Model):
 				('DELEGADA', 'Delegada'),
 				('FINALIZADA', 'Finalizada'))
 
-	empresa = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	empresa = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	titulo =  models.CharField('Título',max_length=25)
 	descricao = models.TextField('Descrição')
 	status = models.CharField(max_length=30, choices=STATUS, default='Criada')
