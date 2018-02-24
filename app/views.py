@@ -142,6 +142,7 @@ def detalhes_ordem(request, ord_id):
 	proposta = Proposta.objects.filter(servico=query)
 	return render(request, 'app/detalhes_servico.html', {'ordem': query, 'propostas': proposta})
 
+@login_required(login_url='app:index')
 def enviar_proposta(request, ord_id):
 	if request.method == 'GET':
 		ordem = OrdemDeServico.objects.get(pk=ord_id)
