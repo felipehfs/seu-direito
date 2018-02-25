@@ -9,7 +9,7 @@ from .models import Proposta
 
 class UserForm(forms.ModelForm):
 	""" UserForm representa a entidade usuário do sistema """
-	password = forms.CharField(widget=forms.PasswordInput)
+	password = forms.CharField(label='Senha', widget=forms.PasswordInput)
 
 	def __init__(self, *args, **kwargs):
 		""" adicionando estilo aos campos """
