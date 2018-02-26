@@ -65,7 +65,7 @@ class OrdemDeServico(models.Model):
 
 class Proposta(models.Model):
 	""" Proposta representa a oferta do advogado """
-	advogado = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	advogado = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	valor = models.DecimalField('valor', max_digits=20, decimal_places=2)
 	servico = models.ForeignKey(OrdemDeServico, on_delete=models.CASCADE)
 	aceito = models.BooleanField(default=False)
