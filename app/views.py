@@ -26,7 +26,7 @@ class RegistrationView(FormView):
 		obj.username = form.cleaned_data['username']
 		obj.tipo = form.cleaned_data['tipo']
 		
-		obj.set_password(form.cleaned_data['password1'])
+		obj.set_password(form.cleaned_data['password'])
 		obj.save()
 		login(self.request, obj)
 		return redirect('app:sistema')

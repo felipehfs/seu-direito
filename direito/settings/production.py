@@ -1,6 +1,6 @@
 from direito.settings.base import *
 
-DEBUG = True 
+DEBUG = False 
 
 import dj_database_url
 
